@@ -805,3 +805,109 @@
   }
   export { transfer };
   ```
+
+### 12. Combine all functionality
+
+- Update index.ts to combine all the above said functionality
+
+  ```ts
+  #!/usr/bin/env node
+  import { logout } from './animations/logout.js';
+  import { login } from './genOperation/login.js';
+  import { createUsers } from './userData/users.js';
+  import { wellcome } from './messages/wellcome.js';
+  import { userPanel } from './panels/userPanel.js';
+  import { adminPanel } from './panels/adminPanel.js';
+  import { transfer } from './userOperation/transfer.js';
+  import { quitApp } from './animations/quitAnimation.js';
+  import { welcomeUser } from './messages/wellcomeUser.js';
+  import { changePin } from './userOperation/changePin.js';
+  import { startApp } from './animations/startAnimation.js';
+  import { startShut } from './adminOperation/startShut.js';
+  import { instructions } from './messages/instructions.js';
+  import { showUsers } from './adminOperation/displayUsers.js';
+  import { transferInput } from './userInputs/transferInput.js';
+  import { fastCashInput } from './userInputs/fastCashInput.js';
+  import { withDrawInput } from './userInputs/withDrawInput.js';
+  import { withDrawCash } from './userOperation/withdrawCash.js';
+  import { balanceInquiry } from './userOperation/balanceInquiry.js';
+  import { confirmAccount } from './userOperation/confirmAccount.js';
+  import { transferDetails } from './userOperation/transferDetails.js';
+  async function atm() {
+    await wellcome(500);
+    await instructions(2);
+    const startResponse = await startShut();
+    if (startResponse) {
+      await startApp();
+      let atmRunning = true;
+      while (atmRunning) {
+        await wellcome(0);
+        let user = await login();
+        let loggedIn = true;
+        while (loggedIn) {
+          if (user === 'admin') {
+            await wellcome(0);
+            welcomeUser(user);
+            const adminResponse = await adminPanel();
+            switch (adminResponse) {
+              case 'Create New User':
+                await createUsers();
+                break;
+              case 'List all Users':
+                await showUsers();
+                break;
+              case 'LogOut':
+                loggedIn = false;
+                await logout();
+                break;
+              case 'ShutDown ATM':
+                loggedIn = false;
+                atmRunning = false;
+                await quitApp();
+                break;
+              default:
+                break;
+            }
+          } else {
+            await wellcome(0);
+            welcomeUser(user);
+            const userResponse = await userPanel();
+            switch (userResponse) {
+              case 'Fast Cash':
+                let fastCashIn = await fastCashInput();
+                await withDrawCash(user, fastCashIn);
+                break;
+              case 'Cash Withdrawl':
+                let withDrawIn = await withDrawInput();
+                await withDrawCash(user, withDrawIn);
+                break;
+              case 'Money Transfer':
+                let transferIn = await transferInput();
+                let confirmd = await confirmAccount(transferIn);
+                let res = await transferDetails(confirmd);
+                if (res && confirmd) {
+                  await transfer(user, transferIn.amount, confirmd);
+                }
+                break;
+              case 'Balance Inquiry':
+                await balanceInquiry(user);
+                break;
+              case 'Change Pin':
+                await changePin(user);
+                break;
+              case 'LogOut':
+                loggedIn = false;
+                await logout();
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      }
+    } else {
+      await quitApp();
+    }
+  }
+  atm();
+  ```
