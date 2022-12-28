@@ -5,18 +5,40 @@
   "main": "./dist/index.js",
   "type": "module",
   "scripts": {
-      "start": "node ."
+    "start": "node ."
   },
   "bin": "./dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hassan-ak/wmd-ts-atm.git"
   },
-  "keywords": ["ATM","typescript","npx"],
+  "keywords": [
+    "ATM",
+    "typescript",
+    "npx"
+  ],
   "author": "Hassan Ali Khan",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/hassan-ak/wmd-ts-atm/issues"
   },
-  "homepage": "https://github.com/hassan-ak/wmd-ts-atm#readme"
+  "homepage": "https://github.com/hassan-ak/wmd-ts-atm#readme",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "cli-table": "^0.3.11",
+    "inquirer": "^9.1.4",
+    "nanoid": "^4.0.0",
+    "node-banner": "^1.4.0",
+    "ora": "^6.1.2",
+    "random-int": "^3.0.0",
+    "unique-names-generator": "^4.7.1"
+  },
+  "devDependencies": {
+    "@types/chalk": "^2.2.0",
+    "@types/cli-table": "^0.3.1",
+    "@types/inquirer": "^9.0.3",
+    "@types/nanoid": "^3.0.0",
+    "@types/ora": "^3.2.0",
+    "@types/random-int": "^2.0.3"
+  }
 }
