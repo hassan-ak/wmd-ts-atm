@@ -106,3 +106,93 @@
   ```
 
 - If everything is right we will have a console output.
+
+### 4. Create random users
+
+- Create `./userData/user.ts` with the following code to add some test users and a function to create random users
+
+  ```ts
+  import { nanoid } from 'nanoid';
+  import randomInteger from 'random-int';
+  import { uniqueNamesGenerator, Config, names } from 'unique-names-generator';
+  interface UserDetails {
+    fullName: string;
+    bankName: string;
+    gender: string;
+    accountNumber: string;
+    balance: number;
+    pin: string;
+  }
+  interface AtmUser {
+    [userName: string]: UserDetails;
+  }
+  let atmUsers: AtmUser = {
+    admin: {
+      fullName: '',
+      bankName: '',
+      gender: '',
+      accountNumber: '',
+      balance: 0,
+      pin: 'admin',
+    },
+    test: {
+      fullName: 'Test User',
+      bankName: 'SCB',
+      gender: 'Male',
+      accountNumber: '298aa892',
+      balance: 100000,
+      pin: 'test',
+    },
+    temp: {
+      fullName: 'Temp User',
+      bankName: 'UBL',
+      gender: 'Female',
+      accountNumber: '12345678',
+      balance: 1500,
+      pin: 'temp',
+    },
+  };
+  const genders: string[] = ['Male', 'Female'];
+  const banks: string[] = ['HBL', 'NBP', 'UBL', 'MCB', 'SCB'];
+  const namesConfig: Config = {
+    dictionaries: [names, names],
+    separator: ' ',
+    length: 2,
+  };
+  const genderConfig: Config = {
+    dictionaries: [genders],
+  };
+  const bankConfig: Config = {
+    dictionaries: [banks],
+  };
+  async function createUsers(number: number = 1) {
+    return new Promise<true>((resolve) => {
+      for (let index = 0; index < number; index++) {
+        const userName: string = nanoid(4).toLowerCase();
+        const fullName: string = uniqueNamesGenerator(namesConfig);
+        const bankName: string = uniqueNamesGenerator(bankConfig);
+        const gender: string = uniqueNamesGenerator(genderConfig);
+        const accountNumber: string = nanoid(8).toLowerCase();
+        const balance: number = randomInteger(0, 1000000);
+        const pin: string = (randomInteger(0, 9999) * 9999)
+          .toString()
+          .slice(0, 4);
+        atmUsers[userName] = {
+          fullName: fullName,
+          bankName: bankName,
+          gender: gender,
+          accountNumber: accountNumber,
+          balance: balance,
+          pin: pin,
+        };
+      }
+      if (number === 1) {
+        console.log('\n\tNew User Generated');
+      }
+      setTimeout(() => {
+        resolve(true);
+      }, 1000);
+    });
+  }
+  export { atmUsers, AtmUser, UserDetails, banks, createUsers };
+  ```
