@@ -594,3 +594,214 @@
   }
   export { transferInput, TransferInput };
   ```
+
+### 11. Create User Operations
+
+- Create `./userOperation/balanceInquirt.ts` for balance inquiry operation
+
+  ```ts
+  import chalk from 'chalk';
+  import Table from 'cli-table';
+  import { atmUsers } from '../userData/users.js';
+  import { cointinueF } from '../genOperation/continue.js';
+  async function balanceInquiry(user: string): Promise<true> {
+    console.log('');
+    return new Promise((resolve) => {
+      var balanceTable: Table = new Table({
+        head: [chalk.green('Balance Inquiry')],
+      });
+      let balanceI: string[][] = [];
+      balanceI.push([
+        `
+      Account holder    :   ${atmUsers[user].fullName}
+      Bank              :   ${atmUsers[user].bankName}
+      Account No.       :   ${atmUsers[user].accountNumber}\n\n
+      Available Balance :   ${chalk.bold(atmUsers[user].balance)}\n
+      `,
+      ]);
+      balanceTable.push(...balanceI);
+      console.log(balanceTable.toString());
+      setTimeout(async () => {
+        console.log(' ');
+        resolve(await cointinueF());
+      }, 1000);
+    });
+  }
+  export { balanceInquiry };
+  ```
+
+- Create `./userOperation/changePin.ts` for changing pen operation
+
+  ```ts
+  import inquirer from 'inquirer';
+  import { atmUsers } from '../userData/users.js';
+  async function changePin(user: string): Promise<true> {
+    console.log('');
+    const response: { response: string; responseN: string } =
+      await inquirer.prompt([
+        {
+          message: 'Enter your current Pin : ',
+          name: 'response',
+          type: 'password',
+          mask: true,
+          validate(input) {
+            if (input === atmUsers[user].pin) {
+              return true;
+            }
+            return 'You entered an in-valid Pin';
+          },
+        },
+        {
+          message: 'Enter your new Pin : ',
+          name: 'responseN',
+          type: 'password',
+          mask: true,
+          validate(input) {
+            if (input.length === 4) {
+              atmUsers[user].pin = input;
+              return true;
+            }
+            return 'Pin should be 4 digits long';
+          },
+        },
+      ]);
+    return new Promise<true>((resolve) => {
+      console.log('\n\tPin Changed');
+      setTimeout(() => {
+        resolve(true);
+      }, 1000);
+    });
+  }
+  export { changePin };
+  ```
+
+- Create `./userOperation/withdrawCash.ts` for withdrawing cash operation
+
+  ```ts
+  import chalk from 'chalk';
+  import Table from 'cli-table';
+  import { atmUsers } from '../userData/users.js';
+  import { cointinueF } from '../genOperation/continue.js';
+  async function withDrawCash(user: string, amount: number): Promise<true> {
+    console.log('');
+    return new Promise((resolve) => {
+      var withdrawTable: Table = new Table({
+        head: [chalk.green('Cash Withdraw')],
+      });
+      let withDrawI: string[][] = [];
+      if (atmUsers[user].balance >= amount) {
+        atmUsers[user].balance = atmUsers[user].balance - amount;
+        withDrawI.push([
+          `
+        Account holder    :   ${atmUsers[user].fullName}
+        Bank              :   ${atmUsers[user].bankName}
+        Account No.       :   ${atmUsers[user].accountNumber}\n\n
+        Amount Withdrawn  :   ${chalk.bold(amount)}\n\n
+        Remaining Balance :   ${chalk.bold(atmUsers[user].balance)}\n
+        `,
+        ]);
+      } else {
+        withDrawI.push([
+          `\n\n${chalk.red('You are running low on balance')}\n\n`,
+        ]);
+      }
+      withdrawTable.push(...withDrawI);
+      console.log(withdrawTable.toString());
+      setTimeout(async () => {
+        console.log(' ');
+        resolve(await cointinueF());
+      }, 1000);
+    });
+  }
+  export { withDrawCash };
+  ```
+
+- Create `./userOperation/transferDetails.ts`, `./userOperation/confirmAccount.ts` and `./userOperation/transfer.ts` for transfer amount operation
+
+  ```ts
+  // confirmAccount.ts
+  import { UserDetails, atmUsers } from '../userData/users.js';
+  import { TransferInput } from '../userInputs/transferInput.js';
+  async function confirmAccount(
+    userSelec: TransferInput
+  ): Promise<[string, UserDetails] | undefined> {
+    for (let i of Object.entries(atmUsers)) {
+      if (
+        i[1].accountNumber === userSelec.account &&
+        i[1].bankName === userSelec.bank
+      ) {
+        return i;
+      } else {
+        continue;
+      }
+    }
+  }
+  export { confirmAccount };
+  ```
+
+  ```ts
+  // transferDetails.ts
+  import chalk from 'chalk';
+  import { UserDetails } from '../userData/users.js';
+  import { cointinueF } from '../genOperation/continue.js';
+  async function transferDetails(
+    param: [string, UserDetails] | undefined
+  ): Promise<boolean> {
+    if (param) {
+      return true;
+    } else {
+      console.log(chalk.red('\n\tNo such Account found\n'));
+      await cointinueF();
+      return false;
+    }
+  }
+  export { transferDetails };
+  ```
+
+  ```ts
+  // transfer.ts
+  import chalk from 'chalk';
+  import Table from 'cli-table';
+  import { UserDetails, atmUsers } from '../userData/users.js';
+  import { cointinueF } from '../genOperation/continue.js';
+  async function transfer(
+    user: string,
+    amount: number,
+    details: [string, UserDetails]
+  ): Promise<true> {
+    console.log('');
+    return new Promise((resolve) => {
+      var transferTable: Table = new Table({
+        head: [chalk.green('Money Transfer')],
+      });
+      let transferI: string[][] = [];
+      if (atmUsers[user].balance >= amount) {
+        atmUsers[user].balance = atmUsers[user].balance - amount;
+        atmUsers[details[0]].balance = atmUsers[details[0]].balance + amount;
+        transferI.push([
+          `
+        Sender Account holder    :   ${atmUsers[user].fullName}
+        Bank                     :   ${atmUsers[user].bankName}
+        Account No.              :   ${atmUsers[user].accountNumber}\n\n
+        Reciever Account holder  :   ${atmUsers[details[0]].fullName}
+        Bank                     :   ${atmUsers[details[0]].bankName}
+        Account No.              :   ${atmUsers[details[0]].accountNumber}\n\n
+        Amount Transfered        :   ${chalk.bold(amount)}\n\n
+        Remaining Balance        :   ${chalk.bold(atmUsers[user].balance)}\n
+        `,
+        ]);
+      } else {
+        transferI.push([
+          `\n\n${chalk.red('You are running low on balance')}\n\n`,
+        ]);
+      }
+      transferTable.push(...transferI);
+      console.log(transferTable.toString());
+      setTimeout(async () => {
+        console.log(' ');
+        resolve(await cointinueF());
+      }, 1000);
+    });
+  }
+  export { transfer };
+  ```
