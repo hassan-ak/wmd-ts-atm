@@ -398,3 +398,53 @@
   }
   export { cointinueF };
   ```
+
+### 8. Create Panels
+
+- Create `./panels/adminPanel.ts` to define admin panel
+
+  ```ts
+  import inquirer from 'inquirer';
+  async function adminPanel(): Promise<string> {
+    const response: { response: string } = await inquirer.prompt([
+      {
+        message: 'What you want to do ?',
+        name: 'response',
+        type: 'list',
+        choices: [
+          'Create New User',
+          'List all Users',
+          'ShutDown ATM',
+          'LogOut',
+        ],
+      },
+    ]);
+    return response.response;
+  }
+  export { adminPanel };
+  ```
+
+- Create `./panels/userPanel.ts` to define user panel
+
+  ```ts
+  import inquirer from 'inquirer';
+  async function userPanel(): Promise<string> {
+    const response: { response: string } = await inquirer.prompt([
+      {
+        message: 'What you want to do ?',
+        name: 'response',
+        type: 'list',
+        choices: [
+          'Fast Cash',
+          'Cash Withdrawl',
+          'Money Transfer',
+          'Balance Inquiry',
+          'Change Pin',
+          'LogOut',
+        ],
+      },
+    ]);
+    return response.response;
+  }
+  export { userPanel };
+  ```
