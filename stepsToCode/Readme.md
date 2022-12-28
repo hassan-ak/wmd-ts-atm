@@ -268,3 +268,71 @@
   }
   export { welcomeUser };
   ```
+
+### 6. Create Animations
+
+- Create `./animations/startAnimation.ts` to display animation on staring atm
+
+  ```ts
+  import chalk from 'chalk';
+  import ora, { Ora } from 'ora';
+  function startApp(): Promise<true> {
+    return new Promise<true>((resolve) => {
+      console.log('');
+      const spinner: Ora = ora(chalk.green(' Staring ATM '));
+      spinner.spinner = 'growHorizontal';
+      spinner.color = 'green';
+      spinner.start();
+      setTimeout(() => {
+        spinner.stop();
+        console.clear();
+        resolve(true);
+      }, 2000);
+    });
+  }
+  export { startApp };
+  ```
+
+- Create `./animations/logout.ts` to display animation on logout
+
+  ```ts
+  import chalk from 'chalk';
+  import ora, { Ora } from 'ora';
+  function logout(): Promise<false> {
+    return new Promise<false>((resolve) => {
+      console.log('');
+      const spinner: Ora = ora(chalk.magenta(' Logging Out '));
+      spinner.spinner = 'dots';
+      spinner.color = 'magenta';
+      spinner.start();
+      setTimeout(() => {
+        spinner.stop();
+        console.clear();
+        resolve(false);
+      }, 2000);
+    });
+  }
+  export { logout };
+  ```
+
+- Create `./animations/quitAnimation.ts` to display animation on shutDown
+
+  ```ts
+  import chalk from 'chalk';
+  import ora, { Ora } from 'ora';
+  function quitApp(): Promise<true> {
+    return new Promise<true>((resolve) => {
+      console.log('');
+      const spinner: Ora = ora(chalk.red(' Shutting Down ATM '));
+      spinner.spinner = 'triangle';
+      spinner.color = 'red';
+      spinner.start();
+      setTimeout(() => {
+        spinner.stop();
+        console.clear();
+        resolve(true);
+      }, 2000);
+    });
+  }
+  export { quitApp };
+  ```
