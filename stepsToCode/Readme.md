@@ -336,3 +336,65 @@
   }
   export { quitApp };
   ```
+
+### 7. Create General Operations
+
+- Create `./genOperation/login.ts` to add lgoin operation
+
+  ```ts
+  import inquirer from 'inquirer';
+  import { UserDetails, atmUsers } from '../userData/users.js';
+  async function login(): Promise<string> {
+    let user: UserDetails;
+    const loginCrede: { username: string; pin: string } = await inquirer.prompt(
+      [
+        {
+          name: 'username',
+          message: 'Enter UserName : ',
+          type: 'input',
+          validate: function (params: string) {
+            if (params in atmUsers) {
+              user = atmUsers[params];
+              return true;
+            } else {
+              return 'Enter a valid user\n   You can login as admin to check usernames';
+            }
+          },
+        },
+        {
+          name: 'pin',
+          message: 'Enter Pin : ',
+          type: 'password',
+          mask: true,
+          validate: function (params) {
+            if (params === user.pin) {
+              return true;
+            } else {
+              return 'Enter a valid pin\n   You can login as admin to check pin';
+            }
+          },
+        },
+      ]
+    );
+    return loginCrede.username;
+  }
+  export { login };
+  ```
+
+- Create `./genOperation/continue.ts` to add call-able continue operation
+
+  ```ts
+  import inquirer from 'inquirer';
+  async function cointinueF(): Promise<true> {
+    const res: { response: boolean } = await inquirer.prompt([
+      {
+        name: 'response',
+        type: 'confirm',
+        message: 'Enter to continue : ',
+        default: 'Yes',
+      },
+    ]);
+    return true;
+  }
+  export { cointinueF };
+  ```
