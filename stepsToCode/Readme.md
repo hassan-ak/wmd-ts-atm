@@ -448,3 +448,66 @@
   }
   export { userPanel };
   ```
+
+### 9. Create Admin Operations
+
+- Create `./adminOperation/displayUsers.ts` to display all users
+
+  ```ts
+  import Table from 'cli-table';
+  import { atmUsers } from '../userData/users.js';
+  import { cointinueF } from '../genOperation/continue.js';
+  async function showUsers(): Promise<true> {
+    console.log('');
+    return new Promise((resolve) => {
+      var usersTable: Table = new Table({
+        head: [
+          'UserName',
+          'Pin',
+          'Full Name',
+          'Bank',
+          'Gender',
+          'Account No.',
+          'Balance',
+        ],
+      });
+      let users: string[][] = [];
+      for (let user of Object.keys(atmUsers)) {
+        users.push([
+          user,
+          atmUsers[user].pin,
+          atmUsers[user].fullName,
+          atmUsers[user].bankName,
+          atmUsers[user].gender,
+          atmUsers[user].accountNumber,
+          atmUsers[user].balance.toString(),
+        ]);
+      }
+      usersTable.push(...users);
+      console.log(usersTable.toString());
+      setTimeout(async () => {
+        console.log(' ');
+        resolve(await cointinueF());
+      }, 1000);
+    });
+  }
+  export { showUsers };
+  ```
+
+- Create `./adminOperation/startShut.ts` to define shutdown options
+
+  ```ts
+  import inquirer from 'inquirer';
+  async function startShut(): Promise<boolean> {
+    const response: { response: string } = await inquirer.prompt([
+      {
+        message: 'What you want to do ?',
+        name: 'response',
+        type: 'list',
+        choices: ['Start ATM', 'ShutDown ATM'],
+      },
+    ]);
+    return response.response === 'Start ATM' ? true : false;
+  }
+  export { startShut };
+  ```
