@@ -511,3 +511,86 @@
   }
   export { startShut };
   ```
+
+### 10. Create User Inputs
+
+- Create `./userInputs/fastCashInput.ts` to ask user for fastcash inputs
+
+  ```ts
+  import inquirer from 'inquirer';
+  async function fastCashInput(): Promise<number> {
+    console.log('');
+    const response: { response: string } = await inquirer.prompt([
+      {
+        message: 'Select amount to withdraw',
+        name: 'response',
+        type: 'list',
+        choices: ['500', '1000', '5000', '10000', '20000'],
+      },
+    ]);
+    return Number(response.response);
+  }
+  export { fastCashInput };
+  ```
+
+- Create `./userInputs/withDrawInput.ts` to ask user for withdraw cash inputs
+
+  ```ts
+  import inquirer from 'inquirer';
+  async function withDrawInput(): Promise<number> {
+    console.log('');
+    const response: { response: string } = await inquirer.prompt([
+      {
+        message: 'Select amount to withdraw',
+        name: 'response',
+        type: 'input',
+        default: 500,
+        validate(input) {
+          if (input % 500 !== 0) {
+            return 'Enter a value in multiple of 500';
+          }
+          return true;
+        },
+      },
+    ]);
+    return Number(response.response);
+  }
+  export { withDrawInput };
+  ```
+
+- Create `./userInputs/transferInput.ts` to ask user for transfer cash inputs
+
+  ```ts
+  import inquirer from 'inquirer';
+  import { banks } from '../userData/users.js';
+  interface TransferInput {
+    bank: string;
+    account: string;
+    amount: number;
+  }
+  async function transferInput(): Promise<TransferInput> {
+    console.log('');
+    const response: TransferInput = await inquirer.prompt([
+      {
+        message: 'Select bank : ',
+        name: 'bank',
+        type: 'list',
+        choices: banks,
+      },
+      {
+        message: 'Enter bank account : ',
+        name: 'account',
+        type: 'input',
+        default: '0',
+      },
+      {
+        message: 'Enter amount to transfer : ',
+        name: 'amount',
+        type: 'number',
+        default: 0,
+      },
+    ]);
+    return response;
+  }
+  export { transferInput, TransferInput };
+  ```
