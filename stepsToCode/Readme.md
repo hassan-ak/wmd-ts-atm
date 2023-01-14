@@ -1,4 +1,4 @@
-# Steps to code CLI Currency Converter
+# Steps to code CLI ATM
 
 ### 1. Project initiation
 

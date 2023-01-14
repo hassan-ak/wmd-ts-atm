@@ -1,6 +1,6 @@
 # Command Line ATM (TS)
 
-A CLI based word counter using typescript and published as an executable npm package, complete problem statement is available [here](https://github.com/panaverse/typescript-node-projects/tree/main/project02_atm).
+A CLI based ATM using typescript and published as an executable npm package, complete problem statement is available [here](https://github.com/panaverse/typescript-node-projects/tree/main/project02_atm).
 
 ## NPM Package
 
@@ -48,6 +48,10 @@ This project is published as an [npm package](https://www.npmjs.com/package/wmd-
     - UserName : Login as admin to view UserNames
     - Pin : Login as admin to view Pins
 
-## Steps to code CLI word counter
+## Demo
+
+[<img src="atm.PNG" width="75%">](https://youtu.be/pcvOqZF_sQs 'CLI ATM')
+
+## Steps to code CLI ATM
 
 All the details to code this app is given [here](https://github.com/hassan-ak/wmd-ts-atm/tree/main/stepsToCode/Readme.md).
